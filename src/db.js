@@ -1,5 +1,5 @@
-import {DatabaseSync} from 'node:sqlite'
-const db = new DatabaseSync(':memory:')
+import { PrismaClient } from '@prisma/client'
+const db = new PrismaClient()
 
 // execute SQL statements from strings
 db.exec(`
