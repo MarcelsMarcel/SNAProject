@@ -3,22 +3,57 @@ import db from '../db.js'
 
 const router = express.Router()
 
-router.get('/', (req, res) => {
-    const getTodos = db.prepare('SELECT * FROM todos WHERE user_id = ?')
-    const todos = getTodos.all(req.userId)
-    res.json(todos)
+router.get('/', async (req, res) => {
+    try {
+        const todos = await db.todo.findMany({
+            where: { userId: req.userId }
+        })
+        res.json(todos)
+    } catch (err) {
+        console.log(err.message)
+        res.sendStatus(503)
+    }
 })
 
-router.post('/', (req, res) => {
-
+router.post('/', async (req, res) => {
+    const { task } = req.body
+    try {
+        const todo = await db.todo.create({
+            data: { task, userId: req.userId }
+        })
+        res.json(todo)
+    } catch (err) {
+        console.log(err.message)
+        res.sendStatus(503)
+    }
 })
 
-router.put('/:id', (req, res) => {
-
+router.put('/:id', async (req, res) => {
+    const { id } = req.params
+    const { completed } = req.body
+    try {
+        const todo = await db.todo.update({
+            where: { id: parseInt(id) },
+            data: { completed }
+        })
+        res.json(todo)
+    } catch (err) {
+        console.log(err.message)
+        res.sendStatus(503)
+    }
 })
 
-router.delete('/:id', (req, res) => {
-
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params
+    try {
+        await db.todo.delete({
+            where: { id: parseInt(id) }
+        })
+        res.json({ message: 'Deleted' })
+    } catch (err) {
+        console.log(err.message)
+        res.sendStatus(503)
+    }
 })
 
 export default router
