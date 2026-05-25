@@ -10,4 +10,4 @@ COPY . .
 RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" npx prisma generate
 
 EXPOSE 5003
-CMD ["node", "./src/server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node ./src/server.js"]
